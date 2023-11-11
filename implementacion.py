@@ -67,3 +67,6 @@ print(f'El grafo tiene lazos: {data.has_self_loops()}') #Comprueba si hay nodos 
 
 '''Vamos a visualizar el grafo con NetworkX y Matplotlib. Para ello, vamos a convertir el grado de PyTorch Geometriz a la biblioteca de NetworkX'''
 #Trazamos el conjunto de datos con un color diferente para cada grupo
+
+
+'''En el grafico se se ven los 34 nodos, 78 bordes y 4 etiquetas con 4 colores diferentes. '''
