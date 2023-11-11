@@ -64,3 +64,6 @@ Estos deben usarse para entrenar con declaraciones True,  mientras que los demas
 print(f'Los bordes están dirigidos: {data.is_directed()}') #dice si el grafo está dirigido. Es decir, que la matriz de adyacencia no es simétrica
 print(f'El grafo tiene nodos aislados: {data.has_isolated_nodes()}') #Comprueba si hay nodos que no están conectados con el resto del grafo
 print(f'El grafo tiene lazos: {data.has_self_loops()}') #Comprueba si hay nodos que se conectan a sí mismos
+
+'''Vamos a visualizar el grafo con NetworkX y Matplotlib. Para ello, vamos a convertir el grado de PyTorch Geometriz a la biblioteca de NetworkX'''
+#Trazamos el conjunto de datos con un color diferente para cada grupo
