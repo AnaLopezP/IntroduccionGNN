@@ -2,6 +2,7 @@
 Esta capa final generará 4 valores, correspondientes a las 4 clases de nodos. El valor más alto determinará la clase del nodo.'''
 
 '''Definimos la capa GCN con una capa oculta de 3 dimensiones.'''
+
 import torch.nn
 from torch_geometric.nn import GCNConv
 from torch_geometric.datasets import KarateClub
@@ -120,7 +121,9 @@ print(h)
 
 #Obtener la primera incrustación en la época = 0
 embed = h[0].detach().cpu().numpy()
-
+if len(embed.shape) == 1:
+    embed = embed.reshape(1, -1)
+    
 fig = plt.figure(figsize=(12, 12))
 plt.axis('off')
 ax = fig.add_subplot(projection='3d')
@@ -130,12 +133,16 @@ plt.tick_params(left=False,
                 labelleft=False,
                 labelbottom=False)
 
-data_y_flat = data.y.numpy().ravel()
-embed = embed.reshape(-1, 3)
-ax.scatter(embed[:, 0], embed[:, 1], embed[:, 2],
-           s=200, c=data_y_flat, cmap="hsv", vmin=-2, vmax=3)
+#convertir data.y a una matriz de una dimension
+colors = data.y.flatten()
 
-plt.show()
+#usar un mapa de colores apropiado:
+cmapa = plt.cm.hsv
+#data_y_flat = data.y.numpy().ravel()
+
+ax.scatter(embed[:, 0], embed[:, 1], embed[:, 2],
+           s=200)
+
 
 
 
@@ -162,4 +169,5 @@ plt.tick_params(left=False,
 
 anim = animation.FuncAnimation(fig, animate, \
               np.arange(0, 200, 10), interval=800, repeat=True)
-html = HTML(anim.to_html5_video())
+html = HTML(anim.to_jshtml())
+plt.show()
