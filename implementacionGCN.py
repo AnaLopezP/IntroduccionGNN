@@ -8,11 +8,14 @@ from torch_geometric.datasets import KarateClub
 
 import IPython
 from IPython.display import HTML
-import matplotlib as plt 
+import matplotlib.pyplot as plt 
+import matplotlib.animation as animation
+import matplotlib
 import networkx as nx
 from torch_geometric.utils import to_networkx
 import numpy as np
 
+matplotlib.use('Agg')
 dataset = KarateClub()
 data = dataset[0]
 class GCN(torch.nn.Module):
@@ -103,8 +106,60 @@ def animate(i):
     
 fig = plt.figure(figsize=(12, 12))
 plt.axis('off')
-anim = plt.animation.FuncAnimation(fig, animate, \
+anim = animation.FuncAnimation(fig, animate, \
             np.arange(0, 200, 10), interval=500, repeat=True)
-html = HTML(anim.to_html5_video())
+animatione_html = HTML(anim.to_jshtml())
 
-IPython.display(html)
+IPython.display.display(animatione_html)
+
+#Printeamos las incrustaciones aprendidas
+print(f'Final embeddings = {h.shape}')
+print(h)
+
+
+
+#Obtener la primera incrustación en la época = 0
+embed = h[0].detach().cpu().numpy()
+
+fig = plt.figure(figsize=(12, 12))
+plt.axis('off')
+ax = fig.add_subplot(projection='3d')
+ax.patch.set_alpha(0)
+plt.tick_params(left=False,
+                bottom=False,
+                labelleft=False,
+                labelbottom=False)
+
+data_y_flat = data.y.numpy().ravel()
+embed = embed.reshape(-1, 3)
+ax.scatter(embed[:, 0], embed[:, 1], embed[:, 2],
+           s=200, c=data_y_flat, cmap="hsv", vmin=-2, vmax=3)
+
+plt.show()
+
+
+
+#Veamos cómo evolucionan con el tiempo, a medida que GCN mejora cada vez más en la clasificación de nodos.
+
+def animate(i):
+    embed = embeddings[i].detach().cpu().numpy()
+    ax.clear()
+    color_values = outputs[i].detach().cpu().numpy().ravel()
+    scatter = ax.scatter(embed[:, 0], embed[:, 1], embed[:, 2],
+           s=200, c=color_values, cmap="hsv", vmin=-2, vmax=3)
+    plt.title(f'Epoch {i} | Loss: {losses[i]:.2f} | Acc: {accuracies[i]*100:.2f}%',
+              fontsize=18, pad=40)
+    #añadimos una barra de colores
+    plt.colorbar(scatter)
+
+fig = plt.figure(figsize=(12, 12))
+plt.axis('off')
+ax = fig.add_subplot(projection='3d')
+plt.tick_params(left=False,
+                bottom=False,
+                labelleft=False,
+                labelbottom=False)
+
+anim = animation.FuncAnimation(fig, animate, \
+              np.arange(0, 200, 10), interval=800, repeat=True)
+html = HTML(anim.to_html5_video())
